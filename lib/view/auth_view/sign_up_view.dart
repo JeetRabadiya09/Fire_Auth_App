@@ -1,7 +1,6 @@
 import 'package:fire_auth_app/view/auth_view/login_view.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../Home/home_view.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({Key? key}) : super(key: key);
@@ -11,6 +10,9 @@ class SignUpView extends StatefulWidget {
 }
 
 class _SignUpViewState extends State<SignUpView> {
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
+  User? userdata;
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -68,6 +70,7 @@ class _SignUpViewState extends State<SignUpView> {
                   height: screenHeight / 40,
                 ),
                 TextFormField(
+                  controller: emailcontroller,
                   validator: (value) {
                     if (!RegExp(
                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -99,6 +102,7 @@ class _SignUpViewState extends State<SignUpView> {
                   height: screenHeight / 40,
                 ),
                 TextFormField(
+                  controller: passwordcontroller,
                   validator: (value) {
                     if (!RegExp(r"^[a-zA-Z0-9]{6}$").hasMatch(value!)) {
                       return "Enter Passcode";
@@ -113,8 +117,8 @@ class _SignUpViewState extends State<SignUpView> {
                     ),
                     // contentPadding: const EdgeInsets.all(00),
                     isDense: true,
-                    labelText: "passcode",
-                    hintText: "Enter passcode ",
+                    labelText: "password",
+                    hintText: "Enter password ",
                     contentPadding: const EdgeInsets.all(12),
                     hintStyle: const TextStyle(
                         color: Color(0xFFB3B3B3),
@@ -136,12 +140,13 @@ class _SignUpViewState extends State<SignUpView> {
                       backgroundColor:
                           const MaterialStatePropertyAll(Colors.orange)),
                   onPressed: () {
+                    signuser();
                     if (formkey.currentState!.validate()) {
                       debugPrint("is valid");
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomeView(),
+                          builder: (context) => const LogininView(),
                         ),
                       );
                     } else {
@@ -174,91 +179,6 @@ class _SignUpViewState extends State<SignUpView> {
                     style: TextStyle(color: Colors.orange),
                   ),
                 ),
-                // Container(
-                //   height: screenHeight / 15,
-                //   width: double.infinity,
-                //   alignment: Alignment.center,
-                //   decoration: BoxDecoration(
-                //     color: AppColors.orange,
-                //     borderRadius: BorderRadius.circular(10),
-                //   ),
-                //   child: const Text(
-                //     AppStrings.signup,
-                //     style: TextStyle(
-                //       fontSize: 14,
-                //       fontFamily: "Poppins",
-                //       fontWeight: FontWeight.w500,
-                //       color: AppColors.white,
-                //     ),
-                //   ),
-                // ),
-                // SizedBox(
-                //   height: screenHeight / 40,
-                // ),
-                // Container(
-                //   height: screenHeight / 15,
-                //   width: double.infinity,
-                //   alignment: Alignment.center,
-                //   decoration: BoxDecoration(
-                //     color: AppColors.white,
-                //     borderRadius: BorderRadius.circular(10),
-                //   ),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.center,
-                //     children: [
-                //       Image.asset(AppAssets.imagegoogle,
-                //           width: screenWidth / 10, height: screenHeight / 10),
-                //       SizedBox(
-                //         width: screenWidth / 50,
-                //       ),
-                //       const Text(
-                //         AppStrings.signupgoogle,
-                //         style: TextStyle(
-                //           fontSize: 14,
-                //           fontFamily: "Poppins",
-                //           fontWeight: FontWeight.w600,
-                //           color: AppColors.black,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-                // SizedBox(
-                //   height: screenHeight / 50,
-                // ),
-                // GestureDetector(
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (context) => const SignIn(),
-                //       ),
-                //     );
-                //   },
-                //   child: RichText(
-                //     text: const TextSpan(
-                //       // style: TextStyle(color: Color(0xFF7C7C7C), fontSize: 18),
-                //       children: [
-                //         TextSpan(
-                //             text: AppStrings.richsignone,
-                //             style: TextStyle(
-                //               fontSize: 13,
-                //               fontWeight: FontWeight.w500,
-                //               color: AppColors.black,
-                //               fontFamily: "Poppins",
-                //             )),
-                //         TextSpan(
-                //             text: AppStrings.richsigntwo,
-                //             style: TextStyle(
-                //               fontSize: 13,
-                //               color: AppColors.orangetwo,
-                //               fontWeight: FontWeight.w500,
-                //               fontFamily: "Poppins",
-                //             )),
-                //       ],
-                //     ),
-                //   ),
-                // ),
                 SizedBox(
                   height: screenHeight / 20,
                 ),
@@ -268,5 +188,33 @@ class _SignUpViewState extends State<SignUpView> {
         ),
       ),
     );
+  }
+
+  signuser() async {
+    try {
+      await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: emailcontroller.text,
+            password: passwordcontroller.text,
+          )
+          .then(
+            (value) => (value) {
+              userdata = value.user;
+              debugPrint(value.user.toString());
+              setState(() {});
+            },
+          );
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        debugPrint(
+            'The password provided is too weak.------------------------------------------------------------------->>>');
+      } else if (e.code == 'email-already-in-use') {
+        debugPrint(
+            'The account already exists for that email.------------------------------------------------------------------->>>');
+      }
+    } catch (e) {
+      debugPrint(
+          "$e ------------------------------------------------------------------->>>");
+    }
   }
 }
