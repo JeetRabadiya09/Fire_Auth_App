@@ -73,7 +73,7 @@ class _LogininViewState extends State<LogininView> {
                 TextFormField(
                   controller: passwordcontroller,
                   validator: (value) {
-                    if (!RegExp(r"^[a-zA-Z0-9]{6}$").hasMatch(value!)) {
+                    if (!RegExp(r"^[a-zA-Z0-9]{10}$").hasMatch(value!)) {
                       return "Enter Passcode";
                     }
                     return null;
@@ -141,7 +141,7 @@ class _LogininViewState extends State<LogininView> {
                         ));
                   },
                   child: const Text(
-                    "Sign Up",
+                    "Create Account",
                     style: TextStyle(color: Colors.orange),
                   ),
                 ),
