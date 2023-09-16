@@ -11,6 +11,7 @@ class LogininView extends StatefulWidget {
 
 class _LogininViewState extends State<LogininView> {
   TextEditingController emailcontroller = TextEditingController();
+  User? userdata;
   TextEditingController passwordcontroller = TextEditingController();
 
   GlobalKey<FormState> formkey = GlobalKey<FormState>();
@@ -166,6 +167,8 @@ class _LogininViewState extends State<LogininView> {
           .then(
             (value) => (value) {
               debugPrint(value.user.toString());
+              userdata = value.user;
+              userdata!.emailVerified;
               setState(() {});
             },
           );

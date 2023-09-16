@@ -200,7 +200,7 @@ class _SignUpViewState extends State<SignUpView> {
           .then(
             (value) => (value) {
               userdata = value.user;
-              userdata!.emailVerified;
+              value.user!.sendEmailVerification();
               userdata!.phoneNumber;
 
               debugPrint(value.user.toString());
@@ -220,15 +220,15 @@ class _SignUpViewState extends State<SignUpView> {
           "$e ------------------------------------------------------------------->>>");
     }
   }
-
-  @override
-  void initState() {
-    FirebaseAuth.instance.idTokenChanges().listen((User? user) {
-      if (user == null) {
-        debugPrint('User is currently signed out!');
-      } else {
-        debugPrint('User is signed in!');
-      }
-    });
-  }
+//
+//   @override
+//   void initState() {
+//     FirebaseAuth.instance.idTokenChanges().listen((User? user) {
+//       if (user == null) {
+//         debugPrint('User is currently signed out!');
+//       } else {
+//         debugPrint('User is signed in!');
+//       }
+//     });
+//   }
 }
