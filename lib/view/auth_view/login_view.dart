@@ -1,6 +1,7 @@
 import 'package:fire_auth_app/view/auth_view/sign_up_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:github_sign_in/github_sign_in.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../Home/home_view.dart';
@@ -169,6 +170,20 @@ class _LogininViewState extends State<LogininView> {
                 SizedBox(
                   height: screenHeight / 40,
                 ),
+                TextButton(
+                  onPressed: () {
+                    signInWithGitHub();
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => const SignUpView(),
+                    //     ));
+                  },
+                  child: const Text(
+                    "Github",
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                ),
               ],
             ),
           ),
@@ -223,6 +238,28 @@ class _LogininViewState extends State<LogininView> {
 
       // Once signed in, return the UserCredential
       await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (error) {
+      debugPrint("Error -----> $error");
+    }
+  }
+
+  Future<void> signInWithGitHub() async {
+    try {
+      // Create a GitHubSignIn instance
+      final GitHubSignIn gitHubSignIn = GitHubSignIn(
+          clientId: '408de84054163cb110b6',
+          clientSecret: '86c165bbd99a1af2bd21a271bdef915f916e6a1d',
+          redirectUrl: 'https://my-project.firebaseapp.com/__/auth/handler');
+
+      // Trigger the sign-in flow
+      final result = await gitHubSignIn.signIn(context);
+
+      // Create a credential from the access token
+      final githubAuthCredential =
+          GithubAuthProvider.credential(result.errorMessage);
+
+      // Once signed in, return the UserCredential
+      await FirebaseAuth.instance.signInWithCredential(githubAuthCredential);
     } catch (error) {
       debugPrint("Error -----> $error");
     }
