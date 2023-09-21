@@ -1,4 +1,4 @@
-import 'package:fire_auth_app/view/splash_view.dart';
+import 'package:fire_auth_app/view/Home/home_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      home: const HomeView(),
     );
   }
 }
